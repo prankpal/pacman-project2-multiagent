@@ -314,7 +314,40 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Useful information you can extract from a GameState (pacman.py)
+    curPos = currentGameState.getPacmanPosition()
+    curFood = currentGameState.getFood()
+    curGhostStates = currentGameState.getGhostStates()
+    curScaredTimes = [ghostState.scaredTimer for ghostState in curGhostStates]
+    # Initialize evaluation score
+    evaluation = 0
+
+    # Evaluate distance to the nearest food pellet
+    distances_to_food = [util.manhattanDistance(curPos, food) for food in curFood.asList()]
+    if distances_to_food:
+        min_distance_to_food = min(distances_to_food)
+        evaluation += 1.0 / min_distance_to_food
+
+    # Evaluate proximity to ghosts
+    for ghostState, scaredTime in zip(curGhostStates, curScaredTimes):
+        ghost_position = ghostState.getPosition()
+        distance_to_ghost = util.manhattanDistance(curPos, ghost_position)
+        if scaredTime == 0:
+            # Ghost is not scared, so Pacman should avoid it
+            if distance_to_ghost < 2:
+                    evaluation -= 100
+        else:
+            # Ghost is scared, Pacman can approach it
+            evaluation += 10.0 / (distance_to_ghost + 1)
+
+    # Consider remaining food pellets
+    evaluation -= len(curFood.asList())
+
+    # Consider game score
+    evaluation += currentGameState.getScore()
+
+    return evaluation
+    # util.raiseNotDefined()
 
 # Abbreviation
 better = betterEvaluationFunction
