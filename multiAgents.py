@@ -72,34 +72,69 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-        # Initialize evaluation score
+        
         evaluation = 0
 
-        # Evaluate distance to the nearest food pellet
+        # Distance to the nearest food pellet
         distances_to_food = [util.manhattanDistance(newPos, food) for food in newFood.asList()]
         if distances_to_food:
             min_distance_to_food = min(distances_to_food)
-            evaluation += 1.0 / min_distance_to_food
+            evaluation += 1 / min_distance_to_food
 
-        # Evaluate proximity to ghosts
-        for ghostState, scaredTime in zip(newGhostStates, newScaredTimes):
+        # Distance to ghosts
+        for i in range(len(newGhostStates)):
+            ghostState = newGhostStates[i]
+            scaredTime = newScaredTimes[i]
             ghost_position = ghostState.getPosition()
             distance_to_ghost = util.manhattanDistance(newPos, ghost_position)
             if scaredTime == 0:
-                # Ghost is not scared, so Pacman should avoid it
-                if distance_to_ghost < 2:
-                    evaluation -= 100
+                # Ghost is not scared
+                    if distance_to_ghost <= 1:
+                        evaluation -= 100
             else:
-                # Ghost is scared, Pacman can approach it
-                evaluation += 10.0 / (distance_to_ghost + 1)
+                # Ghost is scared, Pacman can go closer to it
+                evaluation += 15 / (distance_to_ghost + 1)
 
-        # Consider remaining food pellets
+        # Remaining food pellets
         evaluation -= len(newFood.asList())
 
-        # Consider game score
+        # Increase evaluation if new state will increase score
         evaluation += successorGameState.getScore()
 
-        return evaluation
+        return evaluation       
+        # successorGameState = currentGameState.generatePacmanSuccessor(action)
+        # newPos = successorGameState.getPacmanPosition()
+        # newFood = successorGameState.getFood()
+        # newGhostStates = successorGameState.getGhostStates()
+        # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        # # Initialize evaluation score
+        # evaluation = 0
+
+        # # Evaluate distance to the nearest food pellet
+        # distances_to_food = [util.manhattanDistance(newPos, food) for food in newFood.asList()]
+        # if distances_to_food:
+        #     min_distance_to_food = min(distances_to_food)
+        #     evaluation += 1.0 / min_distance_to_food
+
+        # # Evaluate proximity to ghosts
+        # for ghostState, scaredTime in zip(newGhostStates, newScaredTimes):
+        #     ghost_position = ghostState.getPosition()
+        #     distance_to_ghost = util.manhattanDistance(newPos, ghost_position)
+        #     if scaredTime == 0:
+        #         # Ghost is not scared, so Pacman should avoid it
+        #         if distance_to_ghost < 2:
+        #             evaluation -= 100
+        #     else:
+        #         # Ghost is scared, Pacman can approach it
+        #         evaluation += 10.0 / (distance_to_ghost + 1)
+
+        # # Consider remaining food pellets
+        # evaluation -= len(newFood.asList())
+
+        # # Consider game score
+        # evaluation += successorGameState.getScore()
+
+        # return evaluation
 
 def scoreEvaluationFunction(currentGameState):
     """
