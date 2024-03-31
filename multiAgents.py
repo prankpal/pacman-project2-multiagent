@@ -101,40 +101,7 @@ class ReflexAgent(Agent):
         # Increase evaluation if new state will increase score
         evaluation += successorGameState.getScore()
 
-        return evaluation       
-        # successorGameState = currentGameState.generatePacmanSuccessor(action)
-        # newPos = successorGameState.getPacmanPosition()
-        # newFood = successorGameState.getFood()
-        # newGhostStates = successorGameState.getGhostStates()
-        # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-        # # Initialize evaluation score
-        # evaluation = 0
-
-        # # Evaluate distance to the nearest food pellet
-        # distances_to_food = [util.manhattanDistance(newPos, food) for food in newFood.asList()]
-        # if distances_to_food:
-        #     min_distance_to_food = min(distances_to_food)
-        #     evaluation += 1.0 / min_distance_to_food
-
-        # # Evaluate proximity to ghosts
-        # for ghostState, scaredTime in zip(newGhostStates, newScaredTimes):
-        #     ghost_position = ghostState.getPosition()
-        #     distance_to_ghost = util.manhattanDistance(newPos, ghost_position)
-        #     if scaredTime == 0:
-        #         # Ghost is not scared, so Pacman should avoid it
-        #         if distance_to_ghost < 2:
-        #             evaluation -= 100
-        #     else:
-        #         # Ghost is scared, Pacman can approach it
-        #         evaluation += 10.0 / (distance_to_ghost + 1)
-
-        # # Consider remaining food pellets
-        # evaluation -= len(newFood.asList())
-
-        # # Consider game score
-        # evaluation += successorGameState.getScore()
-
-        # return evaluation
+        return evaluation
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -277,7 +244,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 nextAgent = agentIndex + 1
                 if nextAgent >= gameState.getNumAgents(): # Pacman is next, all agents have gone
                     nextAgent = 0
-                    depth -= 1  # Decrement depth after all agents have had their turn
+                    depth -= 1  #all agents have had their turn, depth decrements
                 for action in gameState.getLegalActions(agentIndex):
                     successorGameState = gameState.generateSuccessor(agentIndex, action)
                     newValue, newAction = alphaBeta(successorGameState, alpha, beta, depth, nextAgent)
@@ -290,7 +257,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     beta = min(beta, v)
                 return v, bestAction
         
-        _, action = alphaBeta(gameState, float("-inf"), float("inf"), self.depth, 0)  # Start from Pacman
+        _, action = alphaBeta(gameState, float("-inf"), float("inf"), self.depth, 0)  # Start with Pacman
         return action
         # util.raiseNotDefined()
 
@@ -331,7 +298,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             nextAgent = agentIndex + 1
             if nextAgent >= gameState.getNumAgents():  # Pacman is next, all agents have gone
                 nextAgent = 0
-                depth -= 1  # Decrement depth after all agents have had their turn
+                depth -= 1  # All agents have had their turn, depth decrements
             for action in gameState.getLegalActions(agentIndex):
                 successorGameState = gameState.generateSuccessor(agentIndex, action)
                 newValue, _ = self.expectimax(successorGameState, depth, nextAgent)
